@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FeetX API Dokümantasyonu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a33;
+      --muted: #8aa0c8;
+      --text: #e7eeff;
+      --brand: #6aa9ff;
+      --accent: #9b8cff;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --err: #ef4444;
+      --border: #213058;
+      --code-bg: #0f162b;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    a { color: var(--brand); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .title { font-size: 28px; font-weight: 700; letter-spacing: 0.2px; }
+    .meta { color: var(--muted); font-size: 14px; }
+    .panel { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00)); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 900px) { .grid { grid-template-columns: 300px 1fr; } }
+    .sidebar { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto; }
+    .toc h3 { margin: 0 0 8px; font-size: 14px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; }
+    .toc ul { list-style: none; padding: 0; margin: 0; }
+    .toc li { margin: 6px 0; }
+    .toc a { display: block; padding: 8px 10px; border-radius: 8px; color: var(--text); }
+    .toc a:hover { background: rgba(255,255,255,0.05); }
+    section { scroll-margin-top: 90px; }
+    h2 { margin: 18px 0 8px; font-size: 22px; }
+    h3 { margin: 14px 0 6px; font-size: 16px; color: var(--muted); font-weight: 600; }
+    .endpoint { border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin: 14px 0; background: var(--panel); }
+    .endpoint .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .badge { font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 8px; letter-spacing: 0.4px; }
+    .GET { background: rgba(106,169,255,0.15); color: #93c5fd; border: 1px solid #1d4ed8; }
+    .POST { background: rgba(155,140,255,0.15); color: #c4b5fd; border: 1px solid #6d28d9; }
+    .DELETE { background: rgba(239,68,68,0.15); color: #fecaca; border: 1px solid #b91c1c; }
+    .path { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; }
+    .desc { color: var(--muted); margin-top: 6px; }
+    .block { margin-top: 10px; }
+    .kvs { display: grid; grid-template-columns: 180px 1fr; gap: 8px 16px; }
+    .kvs .k { color: var(--muted); }
+    pre { margin: 10px 0 0; padding: 12px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; overflow: auto; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; font-size: 13px; color: #dbeafe; }
+    .status { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--muted); font-size: 12px; }
+    .pill.ok { border-color: rgba(34,197,94,0.4); color: #bbf7d0; }
+    .pill.warn { border-color: rgba(245,158,11,0.4); color: #fde68a; }
+    .pill.err { border-color: rgba(239,68,68,0.4); color: #fecaca; }
+    footer { margin-top: 40px; color: var(--muted); font-size: 13px; text-align: center; }
+    .note { font-size: 13px; color: var(--muted); }
+    .anchor { color: var(--muted); margin-left: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="title">FeetX API Dokümantasyonu</div>
+        <div class="meta">Base URL: <code>http://localhost:4000</code> · İçerik tipi: <code>application/json</code></div>
+      </div>
+      <div class="panel">
+        <div class="kvs">
+          <div class="k">Kimlik Doğrulama</div>
+          <div>Header: <code>Authorization: Bearer &lt;JWT&gt;</code></div>
+          <div class="k">Roller</div>
+          <div><code>USER</code>, <code>CREATOR</code>, <code>ADMIN</code></div>
+          <div class="k">Enum</div>
+          <div><code>MediaType</code>: <code>IMAGE</code> | <code>VIDEO</code></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <aside class="sidebar panel toc">
+        <h3>İçindekiler</h3>
+        <ul>
+          <li><a href="#health">Health</a></li>
+          <li><a href="#auth">Auth</a></li>
+          <li><a href="#posts">Posts</a></li>
+          <li><a href="#follows">Follows</a></li>
+          <li><a href="#reactions">Reactions</a></li>
+        </ul>
+        <h3>Hata Kodları</h3>
+        <ul>
+          <li>400 · Validasyon</li>
+          <li>401 · Yetkisiz</li>
+          <li>403 · Yasak</li>
+          <li>404 · Bulunamadı</li>
+          <li>409 · Çakışma</li>
+          <li>500 · Sunucu Hatası</li>
+        </ul>
+      </aside>
+
+      <main>
+        <section id="health">
+          <h2>Health <a class="anchor" href="#health">#</a></h2>
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge GET">GET</span>
+              <span class="path">/health</span>
+            </div>
+            <div class="desc">Servisin ayakta olduğunu doğrular.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div>Gerekmez</div>
+                <div class="k">Yanıt</div><div><code>{ "ok": true }</code></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="auth">
+          <h2>Auth <a class="anchor" href="#auth">#</a></h2>
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge POST">POST</span>
+              <span class="path">/auth/register</span>
+            </div>
+            <div class="desc">Yeni kullanıcı kaydı ve JWT üretimi.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div>Gerekmez</div>
+                <div class="k">Body</div><div>
+                  <pre><code>{
+  "email": "a@b.com",
+  "username": "alice",
+  "password": "secret123",
+  "role": "CREATOR" // optional, allowed: USER|CREATOR, default USER
+}</code></pre>
+                </div>
+                <div class="k">Yanıt</div><div><pre><code>{
+  "token": "<JWT>",
+  "user": { "id": "...", "email": "a@b.com", "username": "alice", "role": "CREATOR" }
+}</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge GET">GET</span>
+              <span class="path">/auth/me</span>
+            </div>
+            <div class="desc">Kimliği doğrulanmış kullanıcının profilini döner.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Yanıt</div><div><span class="note">200 · { id, email, username, role, createdAt }</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge POST">POST</span>
+              <span class="path">/auth/change-password</span>
+            </div>
+            <div class="desc">Eski ve yeni parola ile şifreyi değiştirir.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Body</div><div><pre><code>{
+  "oldPassword": "secret123",
+  "newPassword": "newSecret456"
+}</code></pre></div>
+                <div class="k">Yanıt</div><div><code>{ "ok": true }</code></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge POST">POST</span>
+              <span class="path">/auth/login</span>
+            </div>
+            <div class="desc">Giriş yap ve JWT al.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div>Gerekmez</div>
+                <div class="k">Body</div><div>
+                  <pre><code>{
+  "emailOrUsername": "alice",
+  "password": "secret123"
+}</code></pre>
+                </div>
+                <div class="k">Yanıt</div><div><pre><code>{
+  "token": "<JWT>",
+  "user": { "id": "...", "email": "a@b.com", "username": "alice", "role": "CREATOR" }
+}</code></pre></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="posts">
+          <h2>Posts <a class="anchor" href="#posts">#</a></h2>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge POST">POST</span>
+              <span class="path">/posts</span>
+            </div>
+            <div class="desc">Yeni post oluştur. Sadece CREATOR/ADMIN.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code> (CREATOR/ADMIN)</div>
+                <div class="k">Body</div><div><pre><code>{
+  "title": "İlk postum",
+  "content": "Merhaba!",
+  "isSecret": false,
+  "mediaUrl": "https://cdn.example.com/p.jpg",
+  "mediaType": "IMAGE"
+}</code></pre></div>
+                <div class="k">Yanıt</div><div><span class="note">201 · Post</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge GET">GET</span>
+              <span class="path">/posts</span>
+            </div>
+            <div class="desc">Kullanıcıya görünür postları listele (gizli postlar için takip şartı). Cursor pagination destekli.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Query</div><div><code>cursor?</code> (cuid), <code>take?</code> (1-50, default 20)</div>
+                <div class="k">Yanıt</div><div><pre><code>{
+  "data": [Post, ...],
+  "nextCursor": "<cuid> | null"
+}</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge GET">GET</span>
+              <span class="path">/posts/user/:userId</span>
+            </div>
+            <div class="desc">Belirli kullanıcının postları. Gizliler takiple görünür. Cursor pagination destekli.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Params</div><div><code>userId</code> (cuid)</div>
+                <div class="k">Query</div><div><code>cursor?</code> (cuid), <code>take?</code> (1-50, default 20)</div>
+                <div class="k">Yanıt</div><div><pre><code>{
+  "data": [Post, ...],
+  "nextCursor": "<cuid> | null"
+}</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge GET">GET</span>
+              <span class="path">/posts/:postId</span>
+            </div>
+            <div class="desc">Post detayı. Gizli ise, yazarın takipçisi olmalısın.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Params</div><div><code>postId</code> (cuid)</div>
+                <div class="k">Yanıt</div><div><span class="note">200 · Post | 403/404</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge DELETE">DELETE</span>
+              <span class="path">/posts/:postId</span>
+            </div>
+            <div class="desc">Post sil. Sadece sahibi veya ADMIN.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Params</div><div><code>postId</code> (cuid)</div>
+                <div class="k">Yanıt</div><div><code>{ "ok": true }</code></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="follows">
+          <h2>Follows <a class="anchor" href="#follows">#</a></h2>
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge POST">POST</span>
+              <span class="path">/follows/follow</span>
+            </div>
+            <div class="desc">Bir içerik üreticisini takip et.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Body</div><div><pre><code>{ "targetUserId": "<cuid>" }</code></pre></div>
+                <div class="k">Not</div><div>Hedef rolü <code>CREATOR</code> veya <code>ADMIN</code> olmalı.</div>
+                <div class="k">Yanıt</div><div><span class="note">201 · Follow | 409 · Already following</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge POST">POST</span>
+              <span class="path">/follows/unfollow</span>
+            </div>
+            <div class="desc">Takibi bırak.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Body</div><div><pre><code>{ "targetUserId": "<cuid>" }</code></pre></div>
+                <div class="k">Yanıt</div><div><code>{ "ok": true }</code></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge GET">GET</span>
+              <span class="path">/follows/followers/:userId</span>
+            </div>
+            <div class="desc">Bir kullanıcının takipçilerini döner. Cursor pagination destekli.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Params</div><div><code>userId</code> (cuid)</div>
+                <div class="k">Query</div><div><code>cursor?</code> (cuid), <code>take?</code> (1-50, default 20)</div>
+                <div class="k">Yanıt</div><div><pre><code>{
+  "data": [ { id, username, role }, ... ],
+  "nextCursor": "<cuid> | null"
+}</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge GET">GET</span>
+              <span class="path">/follows/following/:userId</span>
+            </div>
+            <div class="desc">Bir kullanıcının takip ettiklerini (creator/admin) döner. Cursor pagination destekli.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Params</div><div><code>userId</code> (cuid)</div>
+                <div class="k">Query</div><div><code>cursor?</code> (cuid), <code>take?</code> (1-50, default 20)</div>
+                <div class="k">Yanıt</div><div><pre><code>{
+  "data": [ { id, username, role }, ... ],
+  "nextCursor": "<cuid> | null"
+}</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge GET">GET</span>
+              <span class="path">/follows/status/:targetUserId</span>
+            </div>
+            <div class="desc">Mevcut kullanıcının hedef kullanıcıyı takip edip etmediğini döner.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Params</div><div><code>targetUserId</code> (cuid)</div>
+                <div class="k">Yanıt</div><div><code>{ "following": true|false }</code></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="reactions">
+          <h2>Reactions <a class="anchor" href="#reactions">#</a></h2>
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge POST">POST</span>
+              <span class="path">/reactions/like</span>
+            </div>
+            <div class="desc">Bir postu beğen.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Body</div><div><pre><code>{ "postId": "<cuid>" }</code></pre></div>
+                <div class="k">Yanıt</div><div><span class="note">201 · Like | 409 · Already liked</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge POST">POST</span>
+              <span class="path">/reactions/unlike</span>
+            </div>
+            <div class="desc">Beğeniyi kaldır.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Body</div><div><pre><code>{ "postId": "<cuid>" }</code></pre></div>
+                <div class="k">Yanıt</div><div><code>{ "ok": true }</code></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge POST">POST</span>
+              <span class="path">/reactions/save</span>
+            </div>
+            <div class="desc">Bir postu kaydet.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Body</div><div><pre><code>{ "postId": "<cuid>" }</code></pre></div>
+                <div class="k">Yanıt</div><div><span class="note">201 · Save | 409 · Already saved</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="row">
+              <span class="badge POST">POST</span>
+              <span class="path">/reactions/unsave</span>
+            </div>
+            <div class="desc">Kaydı kaldır.</div>
+            <div class="block">
+              <div class="kvs">
+                <div class="k">Auth</div><div><code>Bearer &lt;JWT&gt;</code></div>
+                <div class="k">Body</div><div><pre><code>{ "postId": "<cuid>" }</code></pre></div>
+                <div class="k">Yanıt</div><div><code>{ "ok": true }</code></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="notes">
+          <h2>Notlar <a class="anchor" href="#notes">#</a></h2>
+          <ul>
+            <li>Gizli (<code>isSecret: true</code>) postlar, sadece yazarını takip eden kullanıcılarca görüntülenebilir.</li>
+            <li>Reactions (like/save) gizli postlarda da aynı erişim kuralını uygular.</li>
+            <li><code>postId</code> ve <code>userId</code> alanları <code>cuid</code> formatındadır.</li>
+            <li>Varsayılan header: <code>Authorization: Bearer &lt;JWT&gt;</code> olarak Postman environment'ta ayarlanabilir.</li>
+            <li>Sunucu JSON body limiti: 5 MB. CORS originleri <code>CORS_ORIGINS</code> env değişkeniyle yönetilir.</li>
+          </ul>
+        </section>
+
+        <footer>
+          Son güncelleme: <span id="updatedAt"></span>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('updatedAt').textContent = new Date().toLocaleString();
+  </script>
+</body>
+</html>
+
+

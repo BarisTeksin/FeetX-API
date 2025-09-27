@@ -1,0 +1,203 @@
+{
+  "info": {
+    "name": "FeetX API",
+    "_postman_id": "a7f3e0d7-9c3c-4b1e-b0e3-feetx-collection",
+    "description": "FeetX API koleksiyonu. Base URL ve token için environment değişkenleri kullanır.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "cmfmkmtm10000l9k6la75gqmy" },
+    { "key": "postId", "value": "cly123abc0000xyz789" },
+    { "key": "creatorUserId", "value": "cmfmkprv70001l9k6cab7k7yo" },
+    { "key": "cursor", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] } }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /auth/register",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth","register"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"a@b.com\",\n  \"username\": \"alice\",\n  \"password\": \"secret123\",\n  \"role\": \"CREATOR\"\n}" }
+          }
+        },
+        {
+          "name": "POST /auth/login",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"emailOrUsername\": \"alice\",\n  \"password\": \"secret123\"\n}" }
+          }
+        },
+        {
+          "name": "GET /auth/me",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth","me"] }
+          }
+        },
+        {
+          "name": "POST /auth/change-password",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/auth/change-password", "host": ["{{baseUrl}}"], "path": ["auth","change-password"] },
+            "body": { "mode": "raw", "raw": "{\n  \"oldPassword\": \"secret123\",\n  \"newPassword\": \"newSecret456\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "POST /posts (create)",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/posts", "host": ["{{baseUrl}}"], "path": ["posts"] },
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"İlk postum\",\n  \"content\": \"Merhaba!\",\n  \"isSecret\": false,\n  \"mediaUrl\": \"https://cdn.example.com/p.jpg\",\n  \"mediaType\": \"IMAGE\"\n}" }
+          }
+        },
+        {
+          "name": "GET /posts (feed)",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/posts?take=20&cursor={{cursor}}", "host": ["{{baseUrl}}"], "path": ["posts"], "query": [ {"key":"take","value":"20"}, {"key":"cursor","value":"{{cursor}}"} ] }
+          }
+        },
+        {
+          "name": "GET /posts/user/:userId",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/posts/user/{{userId}}?take=20&cursor={{cursor}}", "host": ["{{baseUrl}}"], "path": ["posts","user","{{userId}}"], "query": [ {"key":"take","value":"20"}, {"key":"cursor","value":"{{cursor}}"} ] }
+          }
+        },
+        {
+          "name": "GET /posts/:postId",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/posts/{{postId}}", "host": ["{{baseUrl}}"], "path": ["posts","{{postId}}"] }
+          }
+        },
+        {
+          "name": "DELETE /posts/:postId",
+          "request": {
+            "method": "DELETE",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/posts/{{postId}}", "host": ["{{baseUrl}}"], "path": ["posts","{{postId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Follows",
+      "item": [
+        {
+          "name": "POST /follows/follow",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/follows/follow", "host": ["{{baseUrl}}"], "path": ["follows","follow"] },
+            "body": { "mode": "raw", "raw": "{\n  \"targetUserId\": \"{{creatorUserId}}\"\n}" }
+          }
+        },
+        {
+          "name": "POST /follows/unfollow",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/follows/unfollow", "host": ["{{baseUrl}}"], "path": ["follows","unfollow"] },
+            "body": { "mode": "raw", "raw": "{\n  \"targetUserId\": \"{{creatorUserId}}\"\n}" }
+          }
+        },
+        {
+          "name": "GET /follows/followers/:userId",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/follows/followers/{{userId}}?take=20&cursor={{cursor}}", "host": ["{{baseUrl}}"], "path": ["follows","followers","{{userId}}"], "query": [ {"key":"take","value":"20"}, {"key":"cursor","value":"{{cursor}}"} ] }
+          }
+        },
+        {
+          "name": "GET /follows/following/:userId",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/follows/following/{{userId}}?take=20&cursor={{cursor}}", "host": ["{{baseUrl}}"], "path": ["follows","following","{{userId}}"], "query": [ {"key":"take","value":"20"}, {"key":"cursor","value":"{{cursor}}"} ] }
+          }
+        },
+        {
+          "name": "GET /follows/status/:targetUserId",
+          "request": {
+            "method": "GET",
+            "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/follows/status/{{creatorUserId}}", "host": ["{{baseUrl}}"], "path": ["follows","status","{{creatorUserId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reactions",
+      "item": [
+        {
+          "name": "POST /reactions/like",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/reactions/like", "host": ["{{baseUrl}}"], "path": ["reactions","like"] },
+            "body": { "mode": "raw", "raw": "{\n  \"postId\": \"{{postId}}\"\n}" }
+          }
+        },
+        {
+          "name": "POST /reactions/unlike",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/reactions/unlike", "host": ["{{baseUrl}}"], "path": ["reactions","unlike"] },
+            "body": { "mode": "raw", "raw": "{\n  \"postId\": \"{{postId}}\"\n}" }
+          }
+        },
+        {
+          "name": "POST /reactions/save",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/reactions/save", "host": ["{{baseUrl}}"], "path": ["reactions","save"] },
+            "body": { "mode": "raw", "raw": "{\n  \"postId\": \"{{postId}}\"\n}" }
+          }
+        },
+        {
+          "name": "POST /reactions/unsave",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" } ],
+            "url": { "raw": "{{baseUrl}}/reactions/unsave", "host": ["{{baseUrl}}"], "path": ["reactions","unsave"] },
+            "body": { "mode": "raw", "raw": "{\n  \"postId\": \"{{postId}}\"\n}" }
+          }
+        }
+      ]
+    }
+  ]
+}
+
+
